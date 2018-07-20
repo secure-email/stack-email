@@ -23,8 +23,10 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 
 RUN mkdir /run/rspamd
 
-COPY conf/ /conf
-COPY start.py /start.py
+COPY ./container_configs/ /conf
+COPY ./start.py /start.py
+COPY ./cmd.sh /cmd.sh
+RUN chmod a+x /cmd.sh
 
 EXPOSE 11332 11334
 
@@ -35,4 +37,4 @@ RUN sed -i '/fuzzy/,$d' /etc/rspamd/rspamd.conf
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # what we use to start the container
-CMD ["/start.py"]
+CMD ["/bin/sh", "-c", "/cmd.sh"]
