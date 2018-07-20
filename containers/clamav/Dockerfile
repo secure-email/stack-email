@@ -21,10 +21,15 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 	apk del tzdata && \
 	rm -f /var/cache/apk/*
 
-# Freshclam infos
-# cp /etc/clamav/freshclam.conf.sample /etc/clamav/freshclam.conf && \
-# freshclam -v
+RUN mkdir /run/clamav && \
+	chown clamav:clamav /run/clamav && \
+	chmod a+rw /run/clamav
 
+COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
+COPY ./container_configs/freshclam.conf /etc/clamav/freshclam.conf
+
+# this should happen some other time but here to get things rolling
+RUN freshclam -v
 
 EXPOSE 3310
 

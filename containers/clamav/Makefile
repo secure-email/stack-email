@@ -4,8 +4,8 @@ ORG = gilleyj
 NAME = clamav
 IMAGE = $(ORG)/$(NAME)
 VERSION = 0.0.1
-PORT_INTERNAL = 25
-PORT_EXTERNAL = 2525
+PORT_INTERNAL = 3310
+PORT_EXTERNAL = 3310
 
 build: ## Build it
 	docker build --pull -t $(IMAGE) .
@@ -13,7 +13,10 @@ build: ## Build it
 buildnocache: ## Build it without using cache
 	docker build --pull -t $(IMAGE) --no-cache .
 
-run: ## run it -v ${PWD}/code:/app/code
+start: ## run it attached
+	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -it $(IMAGE)
+
+run: ## run it detached
 	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -id $(IMAGE)
 
 runshell: ## run the container with an interactive shell
