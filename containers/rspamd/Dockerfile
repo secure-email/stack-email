@@ -14,7 +14,8 @@ RUN mv /etc/profile.d/color_prompt /etc/profile.d/color_prompt.sh && \
 
 # install php7-fpm and a db extension
 RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
-	python py-jinja2 rspamd rspamd-controller rspamd-proxy && \
+	python py-jinja2 \
+	rspamd rspamd-controller rspamd-proxy && \
 	cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
 	echo "${TIMEZONE}" > /etc/timezone && \
 	apk del tzdata && \
@@ -30,5 +31,8 @@ EXPOSE 11332 11334
 # Temporary fix to remove references to rspamd-fuzzy for now
 RUN sed -i '/fuzzy/,$d' /etc/rspamd/rspamd.conf
 
-ENTRYPOINT ["dumb-init"]
-CMD /start.py
+# start with our PID 1 controller
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# what we use to start the container
+CMD ["/start.py"]

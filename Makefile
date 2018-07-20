@@ -1,44 +1,37 @@
 .DEFAULT_GOAL := help
+DOCKERSYNC := $(shell command -v docker-sync-stack 2> /dev/null)
 
-ORG = gilleyj
-NAME = stack-email
-IMAGE = $(ORG)/$(NAME)
-VERSION = 0.0.1
-PORT_INTERNAL = 25
-PORT_EXTERNAL = 2525
+build: ## Build the app
+	docker-compose stop ;\
+	docker-compose build
 
-build: ## Build it
-	docker build --pull -t $(IMAGE) .
+rebuild: ## Attempt to rebuild the app without cache
+	docker-compose rm --stop --force ;\
+	docker-compose build --force-rm --no-cache
 
-buildnocache: ## Build it without using cache
-	docker build --pull -t $(IMAGE) --no-cache .
+start: ## Start the dev cluster
+	docker-compose -f docker-compose.yaml up
 
-run: ## run it -v ${PWD}/code:/app/code
-	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -id $(IMAGE)
+run: ## Start the development cluster in detached mode
+	docker-compose -f docker-compose.yaml -d
 
-runshell: ## run the container with an interactive shell
-	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -it $(IMAGE) /bin/sh
+stop: ## Attempt to stop the dev cluster
+	docker-compose -f docker-compose.yaml stop
 
-connect: ## connect to it
-	docker exec -it $(NAME)_run /bin/sh
+kill: ## Attempt to kill the dev cluster
+	docker-compose -f docker-compose.yaml kill
 
-watchlog: ## connect to it
-	docker logs -f $(NAME)_run
+nuke: ## Kill and Remove defined containers
+	docker-compose -f docker-compose.yaml rm --force --stop
 
-kill: ## kill it
-	docker kill $(NAME)_run
+connect: ## Attempt to connect to the app on the development cluster
+	docker-compose -f docker-compose.yaml exec app /bin/sh
 
-tag: ## Tag it with $(VERSION)
-	docker tag $(IMAGE):latest $(IMAGE):$(VERSION)
-
-release: tag ## Create and push release to docker hub manually
-	@if ! docker images $(IMAGE) | awk '{ print $$2 }' | grep -q -F $(VERSION); then echo "$(NAME) version $(VERSION) is not yet built. Please run 'make build'"; false; fi
-	docker push $(IMAGE):$(VERSION)
-	@echo "*** Don't forget to create a tag. git tag rel-$(VERSION) && git push origin rel-$(VERSION)"
+watchlogs: ## Watch the logs
+	docker-compose -f docker-compose.yaml logs -f app
 
 .PHONY: help
 
 help: ## Helping devs since 2016
 	@cat $(MAKEFILE_LIST) | grep -e "^[a-zA-Z_\-]*: *.*## *" | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 	@echo "For additional commands have a look at the README"
-

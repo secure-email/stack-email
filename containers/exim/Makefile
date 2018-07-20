@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-ORG = gilleyj
+ORG = secure-email
 NAME = exim
 IMAGE = $(ORG)/$(NAME)
 VERSION = 0.0.1
@@ -13,7 +13,10 @@ build: ## Build it
 buildnocache: ## Build it without using cache
 	docker build --pull -t $(IMAGE) --no-cache .
 
-run: ## run it -v ${PWD}/code:/app/code
+start: ## run it attached
+	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -it $(IMAGE)
+
+run: ## run it detached
 	docker run -p $(PORT_EXTERNAL):$(PORT_INTERNAL) --name $(NAME)_run --rm -id $(IMAGE)
 
 runshell: ## run the container with an interactive shell

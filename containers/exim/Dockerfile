@@ -22,5 +22,10 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 
 # VOLUME ["/var/log/exim"]
 
-ENTRYPOINT ["dumb-init"]
-CMD ["exim","-bdf", "-v", "-q30m"]
+EXPOSE 25
+
+# start with our PID 1 controller
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# what we use to start the container
+CMD ["/usr/sbin/exim", "-bdf", "-v", "-q30m"]

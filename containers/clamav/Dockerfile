@@ -38,8 +38,10 @@ RUN freshclam -v
 # expose our service port
 EXPOSE 3310
 
+USER clamav
+
 # start with our PID 1 controller
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # what we use to start the container
-CMD ["/bin/sh", "-c", "/usr/sbin/clamd ${DEBUG_MODE}"]
+CMD ["/usr/sbin/clamd", "${DEBUG_MODE}"]

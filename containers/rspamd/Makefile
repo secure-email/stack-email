@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := help
 
-ORG = gilleyj
+ORG = secure-email
 NAME = rspamd
 IMAGE = $(ORG)/$(NAME)
 VERSION = 0.0.1

@@ -3,9 +3,24 @@ version: '2'
 services:
   exim:
     build:
-      context: ./
+      context: ./containers/exim
       dockerfile: ./Dockerfile
     ports:
-      - "2525:25"
+      - "25:25"
+
+  clamav:
+    build:
+      context: ./containers/clamav
+      dockerfile: ./Dockerfile
+    ports:
+      - "3310"
+
+  rspamd:
+    build:
+      context: ./containers/rspamd
+      dockerfile: ./Dockerfile
+    ports:
+      - "11332"
+      - "11334"
 
 # other stuff
