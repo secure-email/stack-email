@@ -1,0 +1,39 @@
+Configure Exim
+Next, we will configure exim without SSL, add our domains, and set up dovecot smtp authentication. Set the following in /etc/mail/exim.conf:
+
+nano /etc/mail/exim.conf
+primary_hostname = yourdomain.com
+domainlist local_domains = @ : yourdomain.com
+av_scanner = clamd:/var/lib/clamav/clamd.sock
+spamd_address = 127.0.0.1 783
+Additionally, comment out the SSL lines if they aren't commented out already:
+
+#tls_advertise_hosts = *
+#tls_certificate = /etc/ssl/exim.crt
+#tls_privatekey = /etc/ssl/exim.pem
+In the "acl_check_data:" section, uncomment the following so exim will scan
+incoming e-mail for malware and possible spam:
+
+deny    malware    = *
+        message    = This message contains a virus ($malware_name).
+warn    spam       = nobody
+        add_header = X-Spam_score: $spam_score\n\
+                    X-Spam_score_int: $spam_score_int\n\
+                    X-Spam_bar: $spam_bar\n\
+                    X-Spam_report: $spam_report
+
+Next, search for the section called "begin authenticators" and enter the dovecot authentication details:
+
+dovecot_login:
+  driver = dovecot
+  public_name = LOGIN
+  server_socket = /var/run/dovecot/auth-client
+  server_set_id = $auth1
+
+dovecot_plain:
+  driver = dovecot
+  public_name = PLAIN
+  server_socket = /var/run/dovecot/auth-client
+  server_set_id = $auth1
+Save and close the file.
+
