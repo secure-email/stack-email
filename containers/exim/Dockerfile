@@ -20,9 +20,6 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 	apk del tzdata && \
 	rm -f /var/cache/apk/*
 
-COPY cmd.sh /
-RUN chmod a+x /cmd.sh
-
 # VOLUME ["/var/log/exim"]
 
 EXPOSE 25
