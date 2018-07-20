@@ -26,11 +26,14 @@ RUN mkdir /run/clamav && \
 	chown clamav:clamav /run/clamav && \
 	chmod g+rw /run/clamav
 
-COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
 COPY ./container_configs/freshclam.conf /etc/clamav/freshclam.conf
-
 # this should happen some other time but here to get things rolling
 RUN freshclam -v
+
+COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
+COPY ./cmd.sh /cmd.sh
+RUN chmod a+x /cmd.sh
+
 
 # probably should expose this volume for cronjob freshclam actions
 # VOLUME["/var/lib/clamav"]
@@ -38,10 +41,8 @@ RUN freshclam -v
 # expose our service port
 EXPOSE 3310
 
-USER clamav
-
 # start with our PID 1 controller
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # what we use to start the container
-CMD ["/usr/sbin/clamd", "${DEBUG_MODE}"]
+CMD ["/bin/sh", "-c", "/cmd.sh"]

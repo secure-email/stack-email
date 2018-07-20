@@ -16,6 +16,8 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "3310"
+    environment:
+      - DEBUG_MODE=""
 
   rspamd:
     build:
