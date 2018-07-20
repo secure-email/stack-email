@@ -34,7 +34,6 @@ COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
 COPY ./cmd.sh /cmd.sh
 RUN chmod a+x /cmd.sh
 
-
 # probably should expose this volume for cronjob freshclam actions
 # VOLUME["/var/lib/clamav"]
 

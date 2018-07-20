@@ -25,6 +25,6 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "11332"
-      - "11334"
+      - "11334:11334"
 
 # other stuff
