@@ -13,7 +13,7 @@ RUN mv /etc/profile.d/color_prompt /etc/profile.d/color_prompt.sh && \
 	echo alias dir=\'ls -alh --color\' >> /etc/profile && \
 	echo cat /etc/os-release >> /etc/profile
 
-# install php7-fpm and a db extension
+# install needed tools and our service, setup timezone, and cleanup (forced)
 RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 	clamav clamav-libunrar && \
 	cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
@@ -21,9 +21,10 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 	apk del tzdata && \
 	rm -f /var/cache/apk/*
 
+# create our run directory and make sure it's owned
 RUN mkdir /run/clamav && \
 	chown clamav:clamav /run/clamav && \
-	chmod a+rw /run/clamav
+	chmod g+rw /run/clamav
 
 COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
 COPY ./container_configs/freshclam.conf /etc/clamav/freshclam.conf
@@ -31,7 +32,14 @@ COPY ./container_configs/freshclam.conf /etc/clamav/freshclam.conf
 # this should happen some other time but here to get things rolling
 RUN freshclam -v
 
+# probably should expose this volume for cronjob freshclam actions
+# VOLUME["/var/lib/clamav"]
+
+# expose our service port
 EXPOSE 3310
 
-ENTRYPOINT ["dumb-init"]
-CMD ["clamav","clamd", $DEBUG_MODE]
+# start with our PID 1 controller
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+
+# what we use to start the container
+CMD ["/bin/sh", "-c", "/usr/sbin/clamd ${DEBUG_MODE}"]
