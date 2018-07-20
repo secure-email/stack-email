@@ -31,4 +31,4 @@ EXPOSE 25
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # what we use to start the container
-CMD ["/bin/sh", "-c", "/cmd.sh"]
+CMD ["/usr/sbin/exim", "-bdf", "-v", "-q30m"]
