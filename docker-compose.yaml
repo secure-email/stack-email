@@ -7,6 +7,8 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "25:25"
+    volumes:
+      - ./CONF/exim:/etc/exim
 
   clamav:
     build:

@@ -13,7 +13,7 @@ start: ## Start the dev cluster
 	docker-compose -f docker-compose.yaml up
 
 run: ## Start the development cluster in detached mode
-	docker-compose -f docker-compose.yaml -d
+	docker-compose -f docker-compose.yaml up -d
 
 stop: ## Attempt to stop the dev cluster
 	docker-compose -f docker-compose.yaml stop
@@ -25,7 +25,7 @@ nuke: ## Kill and Remove defined containers
 	docker-compose -f docker-compose.yaml rm --force --stop
 
 connect: ## Attempt to connect to the app on the development cluster
-	docker-compose -f docker-compose.yaml exec app /bin/sh
+	docker-compose -f docker-compose.yaml exec exim /bin/sh
 
 watchlogs: ## Watch the logs
 	docker-compose -f docker-compose.yaml logs -f app
