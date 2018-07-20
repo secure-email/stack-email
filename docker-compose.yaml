@@ -1,0 +1,11 @@
+version: '2'
+# Production
+services:
+  exim:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "2525:25"
+
+# other stuff
