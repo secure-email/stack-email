@@ -1,3 +1,6 @@
+https://pasztor.at/blog/the-big-exim-tutorial
+
+
 Exim ruleset plan:
 
 Each rule failure will result in 421 "you suck, closing transmission" as well as adding the remote IP to blacklist cache
