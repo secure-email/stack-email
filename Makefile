@@ -9,6 +9,9 @@ rebuild: ## Attempt to rebuild the app without cache
 	docker-compose rm --stop --force ;\
 	docker-compose build --force-rm --no-cache
 
+freshclam:
+	docker-compose -f docker-compose.yaml run clamav /usr/bin/freshclam -v
+
 start: ## Start the dev cluster
 	docker-compose -f docker-compose.yaml up
 
@@ -28,7 +31,7 @@ connect: ## Attempt to connect to the app on the development cluster
 	docker-compose -f docker-compose.yaml exec exim /bin/sh
 
 watchlogs: ## Watch the logs
-	docker-compose -f docker-compose.yaml logs -f app
+	docker-compose -f docker-compose.yaml logs -f
 
 .PHONY: help
 

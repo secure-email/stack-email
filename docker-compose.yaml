@@ -18,6 +18,8 @@ services:
       - "3310"
     environment:
       - DEBUG_MODE=""
+    volumes:
+      - ./DATA/clamav:/var/lib/clamav
 
   rspamd:
     build:
@@ -26,5 +28,7 @@ services:
     ports:
       - "11332"
       - "11334:11334"
+    volumes:
+      - ./DATA/rspamd:/var/lib/rspamd
 
 # other stuff
