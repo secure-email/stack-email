@@ -1,0 +1,28 @@
+Exim ruleset plan:
+
+Each rule failure will result in 421 "you suck, closing transmission" as well as adding the remote IP to blacklist cache
+
+
+CONNECT Phase:
+	Check local RBL cache, check remote RBL (cache IP)
+	Concurrency check, are there more then one connections active from this IP?
+
+AUTH Phase:
+	Failure to authenticate 3 times is an automatic TIMED fail. (15 mins?)
+
+HELO/EHLO Phase:
+	Claiming to be local, claiming to be IP, claiming to be bullshit
+	Check SPF (is this possible at this point?)
+
+MAIL FROM Phase:
+	SPF check
+	DKIM check
+
+RCPT TO Phase:
+	Attempting to relay an is automatic fail
+	Attempting to dictionary is an automatic fail
+	Attempting to deliver to unknown address is an automatic fail
+	If sender_ip, MAIL_FROM - RCPT_TO pair is newer then 15mins, 4xx error
+
+DATA Phase:
+	Spam? automatic fail

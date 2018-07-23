@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS `exim_db` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `exim_db`;
+
+DROP TABLE IF EXISTS `domain`;
+CREATE TABLE `domain` (
+  `id` int(11) PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  UNIQUE(name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

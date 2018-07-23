@@ -8,7 +8,10 @@ services:
     ports:
       - "25:25"
     volumes:
-      - ./CONF/exim:/etc/exim
+      - ${PWD}/CONF/exim:/etc/exim
+    depends_on:
+      - mariadb
+      - rspamd
 
   clamav:
     build:
@@ -19,7 +22,7 @@ services:
     environment:
       - DEBUG_MODE=""
     volumes:
-      - ./DATA/clamav:/var/lib/clamav
+      - ${PWD}/DATA/clamav:/var/lib/clamav
 
   rspamd:
     build:
@@ -29,6 +32,31 @@ services:
       - "11332"
       - "11334:11334"
     volumes:
-      - ./DATA/rspamd:/var/lib/rspamd
+      - ${PWD}/DATA/rspamd:/var/lib/rspamd
+    depends_on:
+      - clamav
 
-# other stuff
+  mariadb:
+    build:
+      context: ./containers/db
+      dockerfile: ./Dockerfile
+    ports:
+      - "3306"
+    volumes:
+      - mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'example'
+      MYSQL_USER: 'test'
+      MYSQL_PASS: 'pass'
+
+  adminer:
+    image: adminer:standalone
+    ports:
+      - 9090:8080
+    depends_on:
+      - mariadb
+    links:
+      -  mariadb:db
+
+volumes:
+  mariadb:
