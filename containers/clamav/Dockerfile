@@ -28,14 +28,14 @@ RUN mkdir /run/clamav && \
 
 COPY ./container_configs/freshclam.conf /etc/clamav/freshclam.conf
 # this should happen some other time but here to get things rolling
-RUN freshclam -v
+# RUN freshclam -v
 
 COPY ./container_configs/clamd.conf /etc/clamav/clamd.conf
 COPY ./cmd.sh /cmd.sh
 RUN chmod a+x /cmd.sh
 
 # probably should expose this volume for cronjob freshclam actions
-# VOLUME["/var/lib/clamav"]
+VOLUME ["/var/lib/clamav"]
 
 # expose our service port
 EXPOSE 3310

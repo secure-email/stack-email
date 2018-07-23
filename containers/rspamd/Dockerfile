@@ -19,19 +19,22 @@ RUN apk --update --no-cache add dumb-init tzdata ca-certificates \
 	cp /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
 	echo "${TIMEZONE}" > /etc/timezone && \
 	apk del tzdata && \
-	rm -f /var/cache/apk/*
+	rm -f /var/cache/apk/* && \
+	mkdir /run/rspamd
 
-RUN mkdir /run/rspamd
-
+# Copy over container configs and start scripts
 COPY ./container_configs/ /conf
 COPY ./start.py /start.py
 COPY ./cmd.sh /cmd.sh
 RUN chmod a+x /cmd.sh
 
-EXPOSE 11332 11334
-
-# Temporary fix to remove references to rspamd-fuzzy for now
+# Temporary fix to remove references to rspamd-fuzzy for now ** investigate this
 RUN sed -i '/fuzzy/,$d' /etc/rspamd/rspamd.conf
+
+# Volume for database
+VOLUME ["/var/lib/rspamd"]
+
+EXPOSE 11332 11334
 
 # start with our PID 1 controller
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
